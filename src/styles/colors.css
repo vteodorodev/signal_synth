@@ -1,0 +1,45 @@
+@import url(_variables.css);
+
+/* BACKGROUNDS */
+
+.bg-true-white {
+  background-color: var(--true-white) !important;
+}
+
+.bg-white {
+  background-color: var(--white) !important;
+}
+
+.bg-dark-blue {
+  background-color: var(--dark-blue) !important;
+}
+
+.bg-black {
+  background-color: var(--black) !important;
+}
+
+.bg-true-black {
+  background-color: var(--true-black) !important;
+}
+
+/* TEXT */
+
+.text-true-white {
+  color: var(--true-white) !important;
+}
+
+.text-white {
+  color: var(--white) !important;
+}
+
+.text-dark-blue {
+  color: var(--dark-blue) !important;
+}
+
+.text-black {
+  color: var(--black) !important;
+}
+
+.bg-true-black {
+  color: var(--true-black);
+}
