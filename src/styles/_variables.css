@@ -5,4 +5,14 @@
   --dark-blue: #282c34;
   --black: #2f2f2f;
   --true-black: #000000;
+
+  --font-weight-medium: 500;
+  --font-weight-semi-bold: 600;
+
+  --small-text: 0.75rem;
+  --regular-text: 0.875rem;
+  --large-text: 1rem;
+  --xlarge-text: 1.125rem;
+  --xxlarge-text: 1.25rem;
+  --xxxlarge-text: 1.375rem;
 }

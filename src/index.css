@@ -1,11 +1,19 @@
+@import url(styles/colors.css);
+@import url(styles/layouts.css);
+@import url(styles/typography.css);
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
-    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   width: 100vw;
   height: 100vh;
+}
+
+body,
+html {
+  font-family: "Karla";
+  color: var(--black);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 code {

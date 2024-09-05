@@ -1,0 +1,25 @@
+@import url("_variables.css");
+/*Font weights*/
+
+.fw-medium {
+  font-weight: var(--font-weight-medium);
+}
+
+.fw-semi-bold {
+  font-weight: var(--font-weight-semi-bold);
+}
+
+.fw-bold {
+  font-weight: bold;
+}
+
+.category-text {
+  font-weight: bold;
+  font-size: var(--xxxlarge-text);
+}
+
+.label-text {
+  font-weight: var(--font-weight-semi-bold);
+  color: var(--grey);
+  font-size: var(--xlarge-text);
+}
