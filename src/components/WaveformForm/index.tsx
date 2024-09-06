@@ -1,21 +1,22 @@
 import { ChangeEvent, FormEvent, LegacyRef, useEffect, useRef, useState } from "react";
-import "./index.css";
+import "./styles.css";
+import Slider from "../Slider";
 
-enum Wave {
-  sinusoidal = "sinusoidal",
-  sawtooth = "sawtooth",
-  triangular = "triangular",
-  square = "square",
-}
+type Wave = "sine" | "square" | "triangular" | "sawtooth";
 
-type waveformFormData = {
+const waveOptions: { label: string; form: Wave }[] = [
+  { label: "Sine", form: "sine" },
+  { label: "Square", form: "square" },
+  { label: "Triangular", form: "triangular" },
+  { label: "Sawtooth", form: "sawtooth" },
+];
+
+type FormData = {
   waveform: Wave | null;
-  frequency: Number | null;
-  amplitude: Number | null;
-  phase: Number | null;
+  frequency: number | null;
+  amplitude: number | null;
+  phase: number | null;
 };
-
-const waveforms: Wave[] = [Wave.sinusoidal, Wave.square, Wave.triangular, Wave.sawtooth];
 
 const minFrequency = 0;
 const maxFrequency = 1000;
@@ -24,11 +25,11 @@ const minAmplitude = 0;
 const maxAmplitude = 10;
 
 const minPhase = 0;
-const maxPhase = 259;
+const maxPhase = 359;
 
-const initialFormValues: waveformFormData = {
-  waveform: Wave.square,
-  frequency: 5,
+const initialFormValues: FormData = {
+  waveform: "square",
+  frequency: 20,
   amplitude: 10,
   phase: 0,
 };
@@ -36,7 +37,7 @@ const initialFormValues: waveformFormData = {
 function WaveformForm() {
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [formData, setFormData] = useState<waveformFormData>(initialFormValues);
+  const [formData, setFormData] = useState<FormData>(initialFormValues);
 
   const onChangeWaveform = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, waveform: e.target.value as Wave }));
@@ -44,7 +45,7 @@ function WaveformForm() {
 
   const onChangeFrequency = (e: ChangeEvent<HTMLInputElement>) => {
     const targetFrequency = Number(e.target.value);
-    let newFrequency: Number | null;
+    let newFrequency: number | null;
 
     if (targetFrequency > maxFrequency) {
       newFrequency = maxFrequency;
@@ -87,6 +88,10 @@ function WaveformForm() {
     setFormData((prev) => ({ ...prev, phase: Number(newPhase) }));
   };
 
+  useEffect(() => {
+    console.log(formData);
+  }, [formData]);
+
   return (
     <div className="d-flex flex-column align-items-start px-3 py-2">
       <h3 className="category-text">Sample Waveforms</h3>
@@ -95,54 +100,54 @@ function WaveformForm() {
           <div className="form-section d-flex flex-column align-items-start">
             <span className="label-text">Waveform</span>
             <div className="d-flex flex-row flex-wrap">
-              {waveforms.map((waveform) => (
-                <div className="d-flex flex-row radio-choice me-2" key={waveform}>
+              {waveOptions.map((wave) => (
+                <div className="d-flex align-items-center me-2" key={wave.label}>
                   <input
                     type="radio"
-                    id={waveform}
-                    value={waveform}
-                    name="waveform"
+                    id={wave.form}
+                    value={wave.label}
+                    name="wave"
                     className="me-1"
                     onChange={onChangeWaveform}
                   />
-                  <label htmlFor={waveform}>{waveform}</label>
+                  <label htmlFor={wave.form}>{wave.label}</label>
                 </div>
               ))}
             </div>
           </div>
 
           <div className="form-section d-flex flex-column align-items-start">
-            <span className="label-text">Frequency</span>
-            <span>
-              <input
-                type="number"
-                max={maxFrequency}
-                step={5}
-                className="me-1"
-                onChange={onChangeFrequency}
-                value={Number(formData.frequency)}
-              ></input>
-              <span>Hz</span>
-            </span>
+            <span className="label-text">Frequency (Hz)</span>
+            <Slider
+              value={formData.frequency}
+              min={minFrequency}
+              max={maxFrequency}
+              step={5}
+              onChangeValue={onChangeFrequency}
+              id="frequency-slider"
+            />
           </div>
           <div className="form-section d-flex flex-column align-items-start">
             <span className="label-text">Amplitude</span>
-            <span>
-              <input
-                type="number"
-                className="me-1"
-                onChange={onChangeAmplitude}
-                value={Number(formData.amplitude)}
-              ></input>
-              <span>V</span>
-            </span>
+            <Slider
+              value={formData.amplitude}
+              min={minAmplitude}
+              max={maxAmplitude}
+              step={1}
+              onChangeValue={onChangeAmplitude}
+              id="amplitude-slider"
+            />
           </div>
           <div className="form-section d-flex flex-column align-items-start">
             <span className="label-text">Phase</span>
-            <span>
-              <input type="number" max={359} className="me-1" onChange={onChangePhase}></input>
-              <span>deg</span>
-            </span>
+            <Slider
+              value={formData.phase}
+              min={minPhase}
+              max={maxPhase}
+              step={1}
+              onChangeValue={onChangePhase}
+              id="phase-slider"
+            />
           </div>
         </form>
       </div>
