@@ -1,6 +1,4 @@
-const pi = Math.PI;
-
-export type Wave = "sine" | "square" | "triangular" | "sawtooth" | "custom";
+export const pi = Math.PI;
 
 /* export class Signal {
   wave: Wave;
