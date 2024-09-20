@@ -1,7 +1,16 @@
+import { useContext, useEffect } from "react";
 import "./App.css";
+import StemChart from "./components/StemChart";
 import WaveformForm from "./components/WaveformForm";
+import SignalContextProvider, { SignalContext } from "./contexts/SignalContext";
+import { SignalContextType } from "./commons/types";
 
 function App() {
+  const signal = useContext(SignalContext)?.signal;
+  const fourier = useContext(SignalContext)?.fourier;
+
+  useEffect(() => console.log("app signal", signal), [signal]);
+
   return (
     <div className="App bg-dark-blue">
       <div className="header">
@@ -15,7 +24,10 @@ function App() {
             </div>
           </div>
           <div className="col-sm-12 col-md-8">
-            <div className="bg-white countainer-rounded"></div>
+            <div className="bg-white countainer-rounded">
+              <StemChart data={signal ?? []} />
+              {/* <StemChart data={fourier ?? []} /> */}
+            </div>
           </div>
         </div>
       </div>

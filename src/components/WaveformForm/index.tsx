@@ -1,9 +1,10 @@
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useMemo, useRef, useState } from "react";
 import "./styles.css";
 import Slider from "../Slider";
-import { Waveform } from "../../commons/types";
+import { SignalContextType, Waveform } from "../../commons/types";
 
 import { Wave } from "../../utils/wave";
+import SignalContextProvider, { SignalContext } from "../../contexts/SignalContext";
 
 const waveOptions: { label: string; form: Waveform }[] = [
   { label: "Sine", form: "sine" },
@@ -23,7 +24,7 @@ type FormData = {
 };
 
 const minFrequency = 0;
-const maxFrequency = 10;
+const maxFrequency = 1000;
 
 const minAmplitude = 0;
 const maxAmplitude = 10;
@@ -31,8 +32,11 @@ const maxAmplitude = 10;
 const minPhase = 0;
 const maxPhase = 359;
 
+const minSamplingFrequency = 1;
+const maxSamplingFrequency = 1000;
+
 const minLength = 1;
-const maxLength = 50;
+const maxLength = 1024;
 
 const initialFormValues: FormData = {
   waveform: "sine",
@@ -40,14 +44,16 @@ const initialFormValues: FormData = {
   amplitude: 10,
   phase: 0,
   duration: 2,
-  harmonics: 50,
-  samplingFrequency: 7,
+  harmonics: 5,
+  samplingFrequency: 200,
 };
 
 function WaveformForm() {
   const formRef = useRef<HTMLFormElement>(null);
 
   const [formData, setFormData] = useState<FormData>(initialFormValues);
+
+  const { setSignal, setFourier } = useContext(SignalContext) as SignalContextType;
 
   const wave = useMemo(
     () =>
@@ -118,6 +124,21 @@ function WaveformForm() {
     setFormData((prev) => ({ ...prev, phase: Number(newPhase) }));
   };
 
+  const onChangeSamplingFrequency = (e: ChangeEvent<HTMLInputElement>) => {
+    const targetSamplingFrequency = Number(e.target.value);
+    let newSamplingFrequency: Number | null;
+
+    if (targetSamplingFrequency > maxSamplingFrequency) {
+      newSamplingFrequency = maxSamplingFrequency;
+    } else if (targetSamplingFrequency < minSamplingFrequency) {
+      newSamplingFrequency = minSamplingFrequency;
+    } else {
+      newSamplingFrequency = targetSamplingFrequency;
+    }
+
+    setFormData((prev) => ({ ...prev, samplingFrequency: Number(newSamplingFrequency) }));
+  };
+
   const onChangeHarmonics = (e: ChangeEvent<HTMLInputElement>) => {
     const targetLength = Number(e.target.value);
     let newLength: Number | null;
@@ -134,8 +155,11 @@ function WaveformForm() {
   };
 
   useEffect(() => {
-    console.log(wave.computeFourier());
-  }, [wave]);
+    setSignal([...wave.signal]);
+    // const fourier = wave.computeFourier();
+    // console.log(fourier);
+    // setFourier(fourier.map((val) => val.toPolar().r));
+  }, [wave, setSignal, setFourier]);
 
   return (
     <div className="d-flex flex-column align-items-start px-3 py-2">
@@ -196,7 +220,18 @@ function WaveformForm() {
             />
           </div>
           <div className="form-section d-flex flex-column align-items-start">
-            <span className="label-text">Harmonics</span>
+            <span className="label-text">Sampling Frequency</span>
+            <Slider
+              value={formData.samplingFrequency}
+              min={minSamplingFrequency}
+              max={maxSamplingFrequency}
+              step={1}
+              onChangeValue={onChangeSamplingFrequency}
+              id="sampling-frequency-slider"
+            />
+          </div>
+          <div className="form-section d-flex flex-column align-items-start">
+            <span className="label-text">Length</span>
             <Slider
               value={formData.harmonics}
               min={minLength}
