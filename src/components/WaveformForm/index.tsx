@@ -1,9 +1,11 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import "./styles.css";
 import Slider from "../Slider";
-import { Wave, WaveSignal } from "../../utils/Wave";
+import { Waveform } from "../../commons/types";
 
-const waveOptions: { label: string; form: Wave }[] = [
+import { Wave } from "../../utils/wave";
+
+const waveOptions: { label: string; form: Waveform }[] = [
   { label: "Sine", form: "sine" },
   { label: "Square", form: "square" },
   { label: "Triangular", form: "triangular" },
@@ -11,13 +13,13 @@ const waveOptions: { label: string; form: Wave }[] = [
 ];
 
 type FormData = {
-  waveform: Wave;
+  waveform: Waveform;
   frequency: number;
   amplitude: number;
   phase: number;
   duration: number;
   harmonics: number;
-  samplingFrequency?: number;
+  samplingFrequency: number;
 };
 
 const minFrequency = 0;
@@ -29,13 +31,17 @@ const maxAmplitude = 10;
 const minPhase = 0;
 const maxPhase = 359;
 
+const minLength = 1;
+const maxLength = 50;
+
 const initialFormValues: FormData = {
-  waveform: "square",
+  waveform: "sine",
   frequency: 4,
   amplitude: 10,
   phase: 0,
   duration: 2,
   harmonics: 50,
+  samplingFrequency: 7,
 };
 
 function WaveformForm() {
@@ -43,22 +49,28 @@ function WaveformForm() {
 
   const [formData, setFormData] = useState<FormData>(initialFormValues);
 
-  const signal = useMemo(
+  const wave = useMemo(
     () =>
-      new WaveSignal(
+      new Wave(
         formData.waveform,
         formData.frequency,
         formData.amplitude,
         formData.phase,
-        5,
-        100,
-        {}
+        formData.samplingFrequency,
+        formData.harmonics
       ),
-    [formData]
+    [
+      formData.waveform,
+      formData.frequency,
+      formData.amplitude,
+      formData.phase,
+      formData.samplingFrequency,
+      formData.harmonics,
+    ]
   );
 
   const onChangeWaveform = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, waveform: e.target.value as Wave }));
+    setFormData((prev) => ({ ...prev, waveform: e.target.value as Waveform }));
   };
 
   const onChangeFrequency = (e: ChangeEvent<HTMLInputElement>) => {
@@ -106,9 +118,24 @@ function WaveformForm() {
     setFormData((prev) => ({ ...prev, phase: Number(newPhase) }));
   };
 
+  const onChangeHarmonics = (e: ChangeEvent<HTMLInputElement>) => {
+    const targetLength = Number(e.target.value);
+    let newLength: Number | null;
+
+    if (targetLength > maxLength) {
+      newLength = maxLength;
+    } else if (targetLength < minLength) {
+      newLength = minLength;
+    } else {
+      newLength = targetLength;
+    }
+
+    setFormData((prev) => ({ ...prev, harmonics: Number(newLength) }));
+  };
+
   useEffect(() => {
-    console.log(String(signal.generate()));
-  }, [signal]);
+    console.log(wave.computeFourier());
+  }, [wave]);
 
   return (
     <div className="d-flex flex-column align-items-start px-3 py-2">
@@ -171,12 +198,12 @@ function WaveformForm() {
           <div className="form-section d-flex flex-column align-items-start">
             <span className="label-text">Harmonics</span>
             <Slider
-              value={formData.phase}
-              min={minPhase}
-              max={maxPhase}
+              value={formData.harmonics}
+              min={minLength}
+              max={maxLength}
               step={1}
-              onChangeValue={onChangePhase}
-              id="phase-slider"
+              onChangeValue={onChangeHarmonics}
+              id="length-slider"
             />
           </div>
         </form>

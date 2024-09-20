@@ -4,8 +4,8 @@ import { Fourier } from "../utils/fourier";
 test("calculates dft of dc signal correctly", () => {
   const length = 4;
   const tol = 1e-3;
-  const signal: Signal = { signal: Array(length).fill(1), samplingRate: 1 };
-  const fft = new Fourier(signal.signal.length);
+  const signal = Array(length).fill(1);
+  const fft = new Fourier(signal.length);
 
   const fourier = fft.forward(signal);
 
@@ -21,25 +21,24 @@ test("calculates dft of dc signal correctly", () => {
 test("calculates idft correctly", () => {
   const length = 4;
   const tol = 1e-3;
-  const signal: Signal = { signal: Array(length).fill(1), samplingRate: 1 };
-  const fft = new Fourier(signal.signal.length);
+  const signal = Array(length).fill(1);
+  const fft = new Fourier(signal.length);
 
   const fourier = fft.forward(signal);
 
   const reconstructedSignal = fft.reverse(fourier).map((val) => val.toPolar().r);
 
   for (let i = 0; i < length; i++) {
-    expect(signal.signal[0]).toBeCloseTo(reconstructedSignal[0], tol);
+    expect(signal[0]).toBeCloseTo(reconstructedSignal[0], tol);
   }
 });
 
 test("raises error when windows mismatch", () => {
   const size1 = 10;
   const size2 = 20;
-  const samplingRate = 1;
 
   const dft = new Fourier(size1);
-  const signal: Signal = { signal: Array(size2).fill(0), samplingRate };
+  const signal = Array(size2).fill(0);
 
   const t = () => dft.forward(signal);
 

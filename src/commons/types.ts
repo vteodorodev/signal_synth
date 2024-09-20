@@ -6,4 +6,4 @@ export interface Signal {
   fourier?: Complex[];
 }
 
-export type Wave = "sine" | "square" | "triangular" | "sawtooth" | "custom";
+export type Waveform = "sine" | "square" | "triangular" | "sawtooth" | "custom";

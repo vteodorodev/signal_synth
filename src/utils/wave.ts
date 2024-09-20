@@ -1,4 +1,45 @@
+import { Complex } from "mathjs";
+import { Signal, Waveform } from "../commons/types";
+import { Fourier } from "./fourier";
+
 export const pi = Math.PI;
+
+export class Wave implements Signal {
+  signal: number[] | Complex[];
+  samplingRate: number;
+  fourier?: Complex[] | undefined;
+  fft: Fourier;
+
+  constructor(
+    wave: Waveform,
+    frequency: number,
+    amplitude: number,
+    phase: number,
+    samplingRate: number,
+    length: number
+  ) {
+    this.samplingRate = samplingRate;
+    this.fft = new Fourier(length);
+
+    switch (wave) {
+      case "sine":
+      case "square":
+      case "triangular":
+      case "sawtooth":
+      case "custom":
+        this.signal = [] as number[];
+        for (let n = 0; n < length; n++) {
+          const val = amplitude * Math.sin((2 * pi * frequency * n) / samplingRate - phase);
+          this.signal.push(val);
+        }
+    }
+  }
+
+  computeFourier() {
+    this.fourier = this.fft.forward(this.signal);
+    return this.fourier;
+  }
+}
 
 /* export class Signal {
   wave: Wave;

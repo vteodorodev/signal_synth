@@ -41,8 +41,8 @@ export class Fourier {
     }
   }
 
-  forward(signal: Signal) {
-    const length = signal.signal.length;
+  forward(signal: number[] | Complex[]) {
+    const length = signal.length;
     if (length !== this.windowSize) {
       throw new Error("Signal length should match the window size");
     } else {
@@ -51,7 +51,7 @@ export class Fourier {
       for (let k = 0; k < this.windowSize; k++) {
         let phasor = complex(0, 0);
         for (let n = 0; n < this.windowSize; n++) {
-          phasor = add(phasor, multiply(signal.signal[n], this.vandermonde[n][k]) as Complex);
+          phasor = add(phasor, multiply(signal[n], this.vandermonde[n][k]) as Complex);
         }
         if (Math.abs(phasor.re) < this.tol) {
           phasor.re = 0;
