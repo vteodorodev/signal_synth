@@ -1,4 +1,10 @@
-import { FourierDataPoint, NumberOrComplex, RealSignal, Signal } from "../commons/types";
+import {
+  FourierDataPoint,
+  FourierSignal,
+  NumberOrComplex,
+  RealSignal,
+  Signal,
+} from "../commons/types";
 import { Complex, pi, add, multiply, complex, conj } from "mathjs";
 
 export class Fourier {
@@ -18,9 +24,16 @@ export class Fourier {
     if (length !== this.windowSize) {
       throw new Error("Signal length should match the window size");
     } else {
-      const freqSignal: FourierDataPoint[] = [];
+      const freqSignal: FourierSignal = Array<FourierDataPoint>(length).fill({
+        w: 0,
+        re: 0,
+        im: 0,
+        r: 0,
+        phi: undefined,
+      });
 
-      for (let k = 0; k < length; k++) {
+      for (let k = 0; k < Math.floor(length / 2) + 1; k++) {
+        console.log(k);
         let phasor = complex(0, 0);
         for (let n = 0; n < length; n++) {
           const basisVector = this.__calculateBasisVector(n, k);
@@ -35,8 +48,16 @@ export class Fourier {
         }
         const { re, im } = phasor;
         const { r, phi } = phasor.toPolar();
-        freqSignal.push({ re, im, r, phi, w: (samplingRate / length) * k });
+        // freqSignal.push({ re, im, r, phi, w: (samplingRate / length) * k });
+
+        if (k === 0) {
+          freqSignal[k] = { re, im, r, phi, w: (samplingRate / length) * k };
+        } else {
+          freqSignal[k] = { re, im, r, phi, w: (samplingRate / length) * k };
+          freqSignal[length - k] = { re, im, r, phi: -phi, w: -(samplingRate / length) * k };
+        }
       }
+      console.log("freq", freqSignal);
       return freqSignal;
     }
   }

@@ -29,7 +29,7 @@ export class Wave implements Signal {
       case "custom":
         this.signal = [] as number[];
         for (let n = 0; n < length; n++) {
-          const val = amplitude * Math.sin((2 * pi * frequency * n) / samplingRate - phase);
+          const val = 3 + amplitude * Math.sin((2 * pi * frequency * n) / samplingRate - phase);
           this.signal.push(val);
         }
     }
