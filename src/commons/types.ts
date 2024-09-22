@@ -1,11 +1,15 @@
 import { Complex } from "mathjs";
+import { Fourier } from "../utils/fourier";
 
 export type NumberOrComplex = number | Complex;
 
+export type RealSignal = number[];
+export type FourierSignal = FourierDataPoint[];
+
 export interface Signal {
-  signal: number[] | Complex[];
+  signal: RealSignal;
   samplingRate: number;
-  fourier?: Complex[];
+  fourier?: FourierSignal;
 }
 
 export interface DataPoint {
@@ -13,13 +17,28 @@ export interface DataPoint {
   y: number;
 }
 
-export type Dataset = NumberOrComplex[];
+export interface FourierDataPoint {
+  w: number;
+  re: number;
+  im: number;
+  r: number;
+  phi: number | undefined;
+}
+
+export type Dataset = Complex[] | number[];
 
 export type Waveform = "sine" | "square" | "triangular" | "sawtooth" | "custom";
 
 export type SignalContextType = {
-  signal: NumberOrComplex[];
-  fourier: NumberOrComplex[];
-  setSignal: (signal: NumberOrComplex[]) => void;
-  setFourier: (fourier: NumberOrComplex[]) => void;
+  signal: RealSignal;
+  fourier: FourierSignal;
+  setSignal: (signal: RealSignal) => void;
+  setFourier: (fourier: FourierSignal) => void;
 };
+
+export type StemChartType = "time" | "magnitude" | "phase";
+
+export interface StemChartProps {
+  data: RealSignal | FourierSignal;
+  type: StemChartType;
+}

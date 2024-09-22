@@ -9,8 +9,6 @@ function App() {
   const signal = useContext(SignalContext)?.signal;
   const fourier = useContext(SignalContext)?.fourier;
 
-  useEffect(() => console.log("app signal", signal), [signal]);
-
   return (
     <div className="App bg-dark-blue">
       <div className="header">
@@ -26,7 +24,7 @@ function App() {
           <div className="col-sm-12 col-md-8">
             <div className="bg-white countainer-rounded">
               {/* <StemChart data={signal ?? []} /> */}
-              <StemChart data={fourier ?? []} />
+              <StemChart data={fourier ?? []} type="magnitude" />
             </div>
           </div>
         </div>

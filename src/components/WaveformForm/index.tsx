@@ -44,8 +44,8 @@ const initialFormValues: FormData = {
   amplitude: 10,
   phase: 0,
   duration: 2,
-  harmonics: 8,
-  samplingFrequency: 8,
+  harmonics: 16,
+  samplingFrequency: 16,
 };
 
 function WaveformForm() {
@@ -157,8 +157,7 @@ function WaveformForm() {
   useEffect(() => {
     setSignal([...wave.signal]);
     const fourier = wave.computeFourier();
-    console.log(fourier);
-    setFourier(fourier.map((val) => val.toPolar().r));
+    setFourier(fourier);
   }, [wave, setSignal, setFourier]);
 
   return (

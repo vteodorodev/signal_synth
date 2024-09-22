@@ -1,13 +1,13 @@
 import { Complex } from "mathjs";
-import { Signal, Waveform } from "../commons/types";
+import { FourierDataPoint, NumberOrComplex, RealSignal, Signal, Waveform } from "../commons/types";
 import { Fourier } from "./fourier";
 
 export const pi = Math.PI;
 
 export class Wave implements Signal {
-  signal: number[] | Complex[];
+  signal: RealSignal;
   samplingRate: number;
-  fourier?: Complex[] | undefined;
+  fourier?: FourierDataPoint[];
   fft: Fourier;
 
   constructor(
@@ -36,7 +36,7 @@ export class Wave implements Signal {
   }
 
   computeFourier() {
-    this.fourier = this.fft.forward(this.signal);
+    this.fourier = this.fft.forward(this.signal, this.samplingRate);
     return this.fourier;
   }
 }
