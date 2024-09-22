@@ -36,7 +36,7 @@ const minSamplingFrequency = 1;
 const maxSamplingFrequency = 1000;
 
 const minLength = 1;
-const maxLength = 1024;
+const maxLength = 512;
 
 const initialFormValues: FormData = {
   waveform: "sine",
@@ -44,8 +44,8 @@ const initialFormValues: FormData = {
   amplitude: 10,
   phase: 0,
   duration: 2,
-  harmonics: 5,
-  samplingFrequency: 200,
+  harmonics: 8,
+  samplingFrequency: 8,
 };
 
 function WaveformForm() {
@@ -156,9 +156,9 @@ function WaveformForm() {
 
   useEffect(() => {
     setSignal([...wave.signal]);
-    // const fourier = wave.computeFourier();
-    // console.log(fourier);
-    // setFourier(fourier.map((val) => val.toPolar().r));
+    const fourier = wave.computeFourier();
+    console.log(fourier);
+    setFourier(fourier.map((val) => val.toPolar().r));
   }, [wave, setSignal, setFourier]);
 
   return (

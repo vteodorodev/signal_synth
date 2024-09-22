@@ -25,8 +25,8 @@ function App() {
           </div>
           <div className="col-sm-12 col-md-8">
             <div className="bg-white countainer-rounded">
-              <StemChart data={signal ?? []} />
-              {/* <StemChart data={fourier ?? []} /> */}
+              {/* <StemChart data={signal ?? []} /> */}
+              <StemChart data={fourier ?? []} />
             </div>
           </div>
         </div>

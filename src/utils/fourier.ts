@@ -48,7 +48,7 @@ export class Fourier {
     } else {
       const freqSignal: Complex[] = [];
 
-      for (let k = 0; k < this.windowSize; k++) {
+      for (let k = 0; k < Math.floor(this.windowSize / 2) + 1; k++) {
         let phasor = complex(0, 0);
         for (let n = 0; n < this.windowSize; n++) {
           phasor = add(phasor, multiply(signal[n], this.vandermonde[n][k]) as Complex);

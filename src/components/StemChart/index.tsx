@@ -51,7 +51,7 @@ function StemChart({ data }: { data: Dataset }) {
       .attr("x2", (d, i) => x(i))
       .attr("y1", (d, i) => y(d as number))
       .attr("y2", (d, i) => y(0))
-      .attr("stroke", "grey");
+      .attr("stroke", "lightblue");
 
     svg
       .selectAll("mycircle")
@@ -61,8 +61,7 @@ function StemChart({ data }: { data: Dataset }) {
       .attr("cx", (d, i) => x(i))
       .attr("cy", (d, i) => y(d as number))
       .attr("r", "4")
-      .style("fill", "#69b3a2")
-      .attr("stroke", "black");
+      .style("fill", "blue");
   };
 
   useEffect(buildSVG, [data]);
