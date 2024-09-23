@@ -20,7 +20,6 @@ export class Fourier {
 
   forward(signal: RealSignal, samplingRate: number = 1) {
     const length = signal.length;
-    console.log("length", length);
     if (length !== this.windowSize) {
       throw new Error("Signal length should match the window size");
     } else {
@@ -34,7 +33,6 @@ export class Fourier {
       });
 
       for (let k = 0; k < Math.floor(length / 2) + 1; k++) {
-        console.log(k);
         let phasor = complex(0, 0);
         for (let n = 0; n < length; n++) {
           const basisVector = this.__calculateBasisVector(n, k);
@@ -66,8 +64,10 @@ export class Fourier {
         }
       }
 
-      console.log(freqSignal);
-      return [...freqSignal.slice(length / 2), ...freqSignal.slice(0, length / 2)];
+      return [
+        ...freqSignal.slice(Math.ceil(length / 2)),
+        ...freqSignal.slice(0, Math.ceil(length / 2)),
+      ];
     }
   }
 

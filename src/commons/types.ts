@@ -43,3 +43,15 @@ export interface StemChartProps {
   data: RealSignal | FourierSignal;
   type: StemChartType;
 }
+
+export interface Margin {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
+export interface Layout {
+  width: number;
+  height: number;
+}
