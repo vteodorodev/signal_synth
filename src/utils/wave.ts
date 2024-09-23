@@ -1,13 +1,13 @@
 import { Complex } from "mathjs";
-import { Signal, Waveform } from "../commons/types";
+import { FourierDataPoint, NumberOrComplex, RealSignal, Signal, Waveform } from "../commons/types";
 import { Fourier } from "./fourier";
 
 export const pi = Math.PI;
 
 export class Wave implements Signal {
-  signal: number[] | Complex[];
+  signal: RealSignal;
   samplingRate: number;
-  fourier?: Complex[] | undefined;
+  fourier?: FourierDataPoint[];
   fft: Fourier;
 
   constructor(
@@ -23,20 +23,35 @@ export class Wave implements Signal {
 
     switch (wave) {
       case "sine":
+        this.signal = [] as number[];
+        for (let n = 0; n < length; n++) {
+          const val = 3 + amplitude * Math.sin((2 * pi * frequency * n) / samplingRate - phase);
+          this.signal.push(val);
+        }
+        break;
       case "square":
+        this.signal = [] as number[];
+        for (let n = 0; n < length; n++) {
+          /*           const val =
+            amplitude * Math.sign(Math.sin((2 * pi * frequency * n) / samplingRate - phase)); */
+          const val = (-1) ** Math.floor(((2 * frequency) / samplingRate) * n);
+          this.signal.push(val);
+        }
+        break;
+
       case "triangular":
       case "sawtooth":
       case "custom":
         this.signal = [] as number[];
         for (let n = 0; n < length; n++) {
-          const val = amplitude * Math.sin((2 * pi * frequency * n) / samplingRate - phase);
+          const val = 3 + amplitude * Math.sin((2 * pi * frequency * n) / samplingRate - phase);
           this.signal.push(val);
         }
     }
   }
 
   computeFourier() {
-    this.fourier = this.fft.forward(this.signal);
+    this.fourier = this.fft.forward(this.signal, this.samplingRate);
     return this.fourier;
   }
 }
