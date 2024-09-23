@@ -91,7 +91,8 @@ function buildMagnitudeStemChart(data: FourierSignal, svgRef: any) {
 
   xMax = d3.max(data, (d) => d.w) as number;
   yMin = 0;
-  yMax = Math.ceil((d3.max(data, (d) => d.r) as number) / 5) * 5;
+  yMax = d3.max(data, (d) => d.r) as number;
+  // yMax = Math.ceil((d3.max(data, (d) => d.r) as number) / 5) * 5;
 
   xScale = d3.scaleLinear().domain([-xMax, xMax]).range([0, width]);
   yScale = d3.scaleLinear().domain([yMin, yMax]).range([height, 0]);
