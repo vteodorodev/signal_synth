@@ -30,6 +30,7 @@ export class Fourier {
         im: 0,
         r: 0,
         phi: undefined,
+        k: 0,
       });
 
       for (let k = 0; k < Math.floor(length / 2) + 1; k++) {
@@ -51,14 +52,22 @@ export class Fourier {
         // freqSignal.push({ re, im, r, phi, w: (samplingRate / length) * k });
 
         if (k === 0) {
-          freqSignal[k] = { re, im, r, phi, w: (samplingRate / length) * k };
+          freqSignal[k] = { re, im, r, phi, w: (samplingRate / length) * k, k };
         } else {
-          freqSignal[k] = { re, im, r, phi, w: (samplingRate / length) * k };
-          freqSignal[length - k] = { re, im, r, phi: -phi, w: -(samplingRate / length) * k };
+          freqSignal[k] = { re, im, r, phi, w: (samplingRate / length) * k, k };
+          freqSignal[length - k] = {
+            re,
+            im,
+            r,
+            phi: -phi,
+            w: -(samplingRate / length) * k,
+            k: length - k,
+          };
         }
       }
-      console.log("freq", freqSignal);
-      return freqSignal;
+
+      console.log(freqSignal);
+      return [...freqSignal.slice(length / 2), ...freqSignal.slice(0, length / 2)];
     }
   }
 

@@ -22,6 +22,7 @@ export interface FourierDataPoint {
   re: number;
   im: number;
   r: number;
+  k: number;
   phi: number | undefined;
 }
 

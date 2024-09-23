@@ -53,7 +53,7 @@ function buildRealStemChart(data: RealSignal, svgRef: any) {
 
   svg.append("g").attr("id", "time-y-axis").call(yAxis);
 
-  svg
+  /*   svg
     .append("g")
     .attr("id", "time-lines")
     .selectAll("time-lines")
@@ -64,7 +64,7 @@ function buildRealStemChart(data: RealSignal, svgRef: any) {
     .attr("x2", (d, i) => x(i))
     .attr("y1", (d, i) => y(d))
     .attr("y2", (d, i) => y(0))
-    .attr("stroke", "lightblue");
+    .attr("stroke", "lightblue"); */
 
   svg
     .append("g")
@@ -75,8 +75,22 @@ function buildRealStemChart(data: RealSignal, svgRef: any) {
     .append("circle")
     .attr("cx", (d, i) => x(i))
     .attr("cy", (d, i) => y(d as number))
-    .attr("r", "4")
+    .attr("r", "2")
     .style("fill", "blue");
+
+  svg
+    .append("path")
+    .datum(data)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 1.5)
+    .attr(
+      "d",
+      d3.line(
+        (d, i) => x(i),
+        (d, i) => y(d)
+      )
+    );
 }
 
 function buildMagnitudeStemChart(data: FourierSignal, svgRef: any) {
@@ -91,8 +105,8 @@ function buildMagnitudeStemChart(data: FourierSignal, svgRef: any) {
 
   xMax = d3.max(data, (d) => d.w) as number;
   yMin = 0;
-  yMax = d3.max(data, (d) => d.r) as number;
-  // yMax = Math.ceil((d3.max(data, (d) => d.r) as number) / 5) * 5;
+  // yMax = d3.max(data, (d) => d.r) as number;
+  yMax = Math.ceil((d3.max(data, (d) => d.r) as number) / 2) * 2;
 
   xScale = d3.scaleLinear().domain([-xMax, xMax]).range([0, width]);
   yScale = d3.scaleLinear().domain([yMin, yMax]).range([height, 0]);
@@ -156,8 +170,22 @@ function buildMagnitudeStemChart(data: FourierSignal, svgRef: any) {
     .append("circle")
     .attr("cx", (d, i) => xScale(d.w))
     .attr("cy", (d, i) => yScale(d.r))
-    .attr("r", "4")
+    .attr("r", "2")
     .style("fill", "blue");
+
+  svg
+    .append("path")
+    .datum(data)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 1.5)
+    .attr(
+      "d",
+      d3.line(
+        (d, i) => xScale(d.w),
+        (d, i) => yScale(d.r)
+      )
+    );
 }
 
 function StemChart({ data, type }: StemChartProps) {
@@ -175,7 +203,7 @@ function StemChart({ data, type }: StemChartProps) {
     }
   };
 
-  useEffect(buildSVG, [data]);
+  useEffect(buildSVG, [data, type]);
 
   // Parse the Data
 
