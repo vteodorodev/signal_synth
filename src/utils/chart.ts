@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import { FourierSignal, Layout, Margin, RealSignal } from "../commons/types";
 
 export function buildCanvas(
-  svgRef: React.RefObject<HTMLElement>,
+  svgRef: React.RefObject<SVGElement>,
   layout: Layout,
   margin: Margin,
   id: string
@@ -50,13 +50,27 @@ export function makeLinearScale(
   xDomain: [number, number],
   yDomain: [number, number],
   width: number,
-  height: number
+  height: number,
+  type: "time" | "frequency"
 ) {
   const xScale = d3.scaleLinear().domain(xDomain).range([0, width]);
   const yScale = d3.scaleLinear().domain(yDomain).range([height, 0]);
 
   const xAxis = d3.axisBottom(xScale);
   const yAxis = d3.axisLeft(yScale);
+
+  xAxis.tickSizeOuter(0);
+
+  switch (type) {
+    case "time":
+      xAxis.tickFormat((d) => "");
+      break;
+    case "frequency":
+      xAxis.tickFormat((d) => (d === 0 ? "" : `${d}`));
+      yAxis.tickFormat((d) => (d === 0 ? "" : `${d}`));
+  }
+
+  xAxis.tickSize(0);
 
   return { xScale, yScale, xAxis, yAxis };
 }
@@ -203,4 +217,61 @@ export function appendAxesLabels(
     .attr("x", chartWidth)
     .attr("y", chartHeight + 30)
     .text(xLabel ?? "");
+}
+
+const layoutHeight = 300;
+const layoutWidth = 960;
+
+const margin = { top: 10, right: 10, bottom: 50, left: 40 },
+  width = layoutWidth - margin.left - margin.right,
+  height = layoutHeight - margin.top - margin.bottom;
+
+export function buildRealStemChart(data: RealSignal, svgRef: any) {
+  const { xDomain, yDomain } = getAxesDomain(data, "time");
+
+  const { xScale, yScale, xAxis, yAxis } = makeLinearScale(xDomain, yDomain, width, height, "time");
+
+  clearCanvas("time-chart");
+
+  const svg = buildCanvas(
+    svgRef,
+    { width: layoutWidth, height: layoutHeight },
+    margin,
+    "time-chart"
+  );
+
+  appendAxes(svg, "time-x-axis", "time-y-axis", xAxis, yAxis, yScale(0), xScale(0));
+
+  appendStems(svg, data, xScale, yScale, "time");
+
+  appendLines(svg, data, xScale, yScale, "time");
+}
+
+export function buildMagnitudeStemChart(data: FourierSignal, svgRef: any) {
+  const { xDomain, yDomain } = getAxesDomain(data, "frequency");
+
+  const { xScale, yScale, xAxis, yAxis } = makeLinearScale(
+    xDomain,
+    yDomain,
+    width,
+    height,
+    "frequency"
+  );
+
+  clearCanvas("magnitude-chart");
+
+  const svg = buildCanvas(
+    svgRef,
+    { width: layoutWidth, height: layoutHeight },
+    margin,
+    "magnitude-chart"
+  );
+
+  appendStems(svg, data, xScale, yScale, "frequency");
+
+  appendAxesLabels(svg, width, height, "Frequency (Hz)");
+
+  appendLines(svg, data, xScale, yScale, "frequency");
+
+  appendAxes(svg, "magnitude-x-axis", "magnitude-y-axis", xAxis, yAxis, yScale(0), xScale(0));
 }
