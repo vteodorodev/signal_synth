@@ -1,11 +1,8 @@
 .header {
-  padding-top: 2rem;
+  /*   padding-top: 2rem;
+ */
 }
 
 .countainer-rounded {
   border-radius: 20px;
-}
-
-.page-contents {
-  margin-top: 5rem;
 }

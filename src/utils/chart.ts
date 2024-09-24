@@ -12,9 +12,10 @@ export function buildCanvas(
     .select(svgRef.current)
     .attr("viewBox", `0 0 ${layout.width} ${layout.height}`)
     .attr("id", id)
-    // .attr("width", width + margin.left + margin.right)
-    .attr("width", "100%")
-    // .attr("height", height + margin.top + margin.bottom)
+    .attr("width", layout.width + margin.left + margin.right)
+    .attr("height", layout.height + margin.top + margin.bottom)
+    /*     .attr("width", "100%")
+    .attr("height", "100%") */
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -219,14 +220,19 @@ export function appendAxesLabels(
     .text(xLabel ?? "");
 }
 
-const layoutHeight = 300;
-const layoutWidth = 960;
+export function buildRealStemChart(
+  data: RealSignal,
+  svgRef: React.RefObject<SVGElement>,
+  parentWidth: number,
+  parentHeight: number
+) {
+  const layoutHeight = parentHeight;
+  const layoutWidth = parentWidth;
 
-const margin = { top: 10, right: 10, bottom: 50, left: 40 },
-  width = layoutWidth - margin.left - margin.right,
-  height = layoutHeight - margin.top - margin.bottom;
+  const margin = { top: 40, right: 40, bottom: 40, left: 40 },
+    width = layoutWidth - margin.left - margin.right,
+    height = layoutHeight - margin.top - margin.bottom;
 
-export function buildRealStemChart(data: RealSignal, svgRef: any) {
   const { xDomain, yDomain } = getAxesDomain(data, "time");
 
   const { xScale, yScale, xAxis, yAxis } = makeLinearScale(xDomain, yDomain, width, height, "time");
@@ -247,7 +253,19 @@ export function buildRealStemChart(data: RealSignal, svgRef: any) {
   appendLines(svg, data, xScale, yScale, "time");
 }
 
-export function buildMagnitudeStemChart(data: FourierSignal, svgRef: any) {
+export function buildMagnitudeStemChart(
+  data: FourierSignal,
+  svgRef: React.RefObject<SVGElement>,
+  parentWidth: number,
+  parentHeight: number
+) {
+  const layoutHeight = parentHeight;
+  const layoutWidth = parentWidth;
+
+  const margin = { top: 40, right: 40, bottom: 40, left: 40 },
+    width = layoutWidth - margin.left - margin.right,
+    height = layoutHeight - margin.top - margin.bottom;
+
   const { xDomain, yDomain } = getAxesDomain(data, "frequency");
 
   const { xScale, yScale, xAxis, yAxis } = makeLinearScale(
@@ -269,7 +287,7 @@ export function buildMagnitudeStemChart(data: FourierSignal, svgRef: any) {
 
   appendStems(svg, data, xScale, yScale, "frequency");
 
-  appendAxesLabels(svg, width, height, "Frequency (Hz)");
+  // appendAxesLabels(svg, width, height, "Frequency (Hz)");
 
   appendLines(svg, data, xScale, yScale, "frequency");
 

@@ -42,6 +42,7 @@ export type StemChartType = "time" | "magnitude" | "phase";
 export interface StemChartProps {
   data: RealSignal | FourierSignal;
   type: StemChartType;
+  parentRef: React.RefObject<HTMLElement>;
 }
 
 export interface Margin {
