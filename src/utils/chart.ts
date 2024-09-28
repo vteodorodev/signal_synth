@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import "../styles/charts.css";
 
 import { FourierSignal, Layout, Margin, RealSignal } from "../commons/types";
 
@@ -67,8 +68,8 @@ export function makeLinearScale(
       xAxis.tickFormat((d) => "");
       break;
     case "frequency":
-      xAxis.tickFormat((d) => (d === 0 ? "" : `${d}`));
-      yAxis.tickFormat((d) => (d === 0 ? "" : `${d}`));
+      xAxis.tickFormat((d, i) => (d === 0 ? "" : `${d}`));
+      yAxis.tickFormat((d, i) => (d === 0 || i % 2 === 0 ? "" : `${d}`));
   }
 
   xAxis.tickSize(0);
@@ -91,13 +92,15 @@ export function appendAxes(
     .attr("transform", "translate(0," + xAxisOffset + ")")
     .call(xAxis)
     .selectAll("text")
-    .style("text-anchor", "center");
+    .attr("class", "axis-font");
 
   svg
     .append("g")
     .attr("id", yAxisId)
     .attr("transform", "translate(" + yAxisOffset + ", 0)")
-    .call(yAxis);
+    .call(yAxis)
+    .selectAll("text")
+    .attr("class", "axis-font");
 }
 
 export function appendStems(
