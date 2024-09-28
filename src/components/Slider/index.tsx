@@ -1,4 +1,7 @@
 import React, { ChangeEvent } from "react";
+import ChevronLeft from "../../assets/chevron_left.svg";
+import ChevronRight from "../../assets/chevron_right.svg";
+
 import "./styles.css";
 
 function Slider({
@@ -16,18 +19,22 @@ function Slider({
   id?: string;
   onChangeValue: (e: ChangeEvent<HTMLInputElement>) => void;
 }) {
+  //TODO: Add mousedown events
+
   return (
-    <div className="slider d-flex align-items-center" id={id}>
+    <div className="slider" id={id}>
+      <img src={ChevronLeft} alt="" role="button" />
       <input
         type="range"
-        className="me-1"
+        className=""
         value={Number(value)}
         min={min}
         max={max}
         step={step}
         onChange={onChangeValue}
       />
-      <span>{String(value)}</span>
+      <img src={ChevronRight} alt="" role="button" />
+      <input type="number" value={Number(value)} onChange={onChangeValue}></input>
     </div>
   );
 }

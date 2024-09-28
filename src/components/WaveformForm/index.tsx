@@ -1,10 +1,11 @@
-import { ChangeEvent, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 import "./styles.css";
 import Slider from "../Slider";
 import { SignalContextType, Waveform } from "../../commons/types";
 
 import { Wave } from "../../utils/wave";
-import SignalContextProvider, { SignalContext } from "../../contexts/SignalContext";
+import { SignalContext } from "../../contexts/SignalContext";
+import useForm, { BasicFormInfo, FormHandler } from "../../hooks/useForm";
 
 const waveOptions: { label: string; form: Waveform }[] = [
   { label: "Sine", form: "sine" },
@@ -13,146 +14,69 @@ const waveOptions: { label: string; form: Waveform }[] = [
   { label: "Sawtooth", form: "sawtooth" },
 ];
 
-type FormData = {
-  waveform: Waveform;
-  frequency: number;
-  amplitude: number;
-  phase: number;
-  duration: number;
-  harmonics: number;
-  samplingFrequency: number;
-};
-
-const minFrequency = 0;
-const maxFrequency = 1000;
-
-const minAmplitude = 0;
-const maxAmplitude = 10;
-
-const minPhase = 0;
-const maxPhase = 359;
-
-const minSamplingFrequency = 1;
-const maxSamplingFrequency = 1000;
-
-const minLength = 1;
-const maxLength = 512;
-
-const initialFormValues: FormData = {
-  waveform: "sine",
-  frequency: 4,
-  amplitude: 10,
-  phase: 0,
-  duration: 2,
-  harmonics: 16,
-  samplingFrequency: 16,
+const initialFormValues: BasicFormInfo = {
+  waveform: {
+    initialValue: "sine",
+  },
+  frequency: {
+    initialValue: 4,
+    min: 0,
+    max: 1000,
+    step: 1,
+  },
+  amplitude: {
+    initialValue: 3,
+    min: 0,
+    max: 20,
+    step: 1,
+  },
+  phase: {
+    initialValue: 0,
+    min: 0,
+    max: 369,
+    step: 1,
+  },
+  length: {
+    initialValue: 8,
+    min: 1,
+    max: 512,
+    step: 1,
+  },
+  samplingRate: {
+    initialValue: 16,
+    min: 1,
+    max: 2000,
+    step: 1,
+  },
 };
 
 function WaveformForm() {
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [formData, setFormData] = useState<FormData>(initialFormValues);
-
   const { setSignal, setFourier } = useContext(SignalContext) as SignalContextType;
+
+  const { waveform, frequency, amplitude, phase, length, samplingRate }: FormHandler =
+    useForm(initialFormValues);
 
   const wave = useMemo(
     () =>
       new Wave(
-        formData.waveform,
-        formData.frequency,
-        formData.amplitude,
-        formData.phase,
-        formData.samplingFrequency,
-        formData.harmonics
+        waveform.value,
+        frequency.value,
+        amplitude.value,
+        phase.value,
+        samplingRate.value,
+        length.value
       ),
     [
-      formData.waveform,
-      formData.frequency,
-      formData.amplitude,
-      formData.phase,
-      formData.samplingFrequency,
-      formData.harmonics,
+      amplitude.value,
+      frequency.value,
+      length.value,
+      phase.value,
+      samplingRate.value,
+      waveform.value,
     ]
   );
-
-  const onChangeWaveform = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, waveform: e.target.value as Waveform }));
-  };
-
-  const onChangeFrequency = (e: ChangeEvent<HTMLInputElement>) => {
-    const targetFrequency = Number(e.target.value);
-    let newFrequency: number;
-
-    if (targetFrequency > maxFrequency) {
-      newFrequency = maxFrequency;
-    } else if (targetFrequency < minFrequency) {
-      newFrequency = minFrequency;
-    } else {
-      newFrequency = targetFrequency;
-    }
-
-    setFormData((prev) => ({ ...prev, frequency: newFrequency }));
-  };
-
-  const onChangeAmplitude = (e: ChangeEvent<HTMLInputElement>) => {
-    const targetAmplitude = Number(e.target.value);
-    let newAmplitude: Number | null;
-
-    if (targetAmplitude > maxAmplitude) {
-      newAmplitude = maxAmplitude;
-    } else if (targetAmplitude < minAmplitude) {
-      newAmplitude = null;
-    } else {
-      newAmplitude = targetAmplitude;
-    }
-
-    setFormData((prev) => ({ ...prev, amplitude: Number(newAmplitude) }));
-  };
-
-  const onChangePhase = (e: ChangeEvent<HTMLInputElement>) => {
-    const targetPhase = Number(e.target.value);
-    let newPhase: Number | null;
-
-    if (targetPhase > maxPhase) {
-      newPhase = maxPhase;
-    } else if (targetPhase < minPhase) {
-      newPhase = null;
-    } else {
-      newPhase = targetPhase;
-    }
-
-    setFormData((prev) => ({ ...prev, phase: Number(newPhase) }));
-  };
-
-  const onChangeSamplingFrequency = (e: ChangeEvent<HTMLInputElement>) => {
-    const targetSamplingFrequency = Number(e.target.value);
-    let newSamplingFrequency: Number | null;
-
-    if (targetSamplingFrequency > maxSamplingFrequency) {
-      newSamplingFrequency = maxSamplingFrequency;
-    } else if (targetSamplingFrequency < minSamplingFrequency) {
-      newSamplingFrequency = minSamplingFrequency;
-    } else {
-      newSamplingFrequency = targetSamplingFrequency;
-    }
-
-    setFormData((prev) => ({ ...prev, samplingFrequency: Number(newSamplingFrequency) }));
-  };
-
-  const onChangeHarmonics = (e: ChangeEvent<HTMLInputElement>) => {
-    const targetLength = Number(e.target.value);
-    let newLength: Number | null;
-
-    if (targetLength > maxLength) {
-      newLength = maxLength;
-    } else if (targetLength < minLength) {
-      newLength = minLength;
-    } else {
-      newLength = targetLength;
-    }
-
-    setFormData((prev) => ({ ...prev, harmonics: Number(newLength) }));
-  };
 
   useEffect(() => {
     setSignal([...wave.signal]);
@@ -174,10 +98,10 @@ function WaveformForm() {
                     type="radio"
                     id={wave.form}
                     value={wave.form}
-                    checked={wave.form === formData.waveform}
+                    checked={wave.form === waveform.value}
                     name="wave"
                     className="me-1"
-                    onChange={onChangeWaveform}
+                    onChange={waveform.onChange}
                   />
                   <label htmlFor={wave.form}>{wave.label}</label>
                 </div>
@@ -188,26 +112,26 @@ function WaveformForm() {
           <div className="form-section d-flex flex-column align-items-start">
             <span className="label-text">Frequency (Hz)</span>
             <Slider
-              value={formData.frequency}
-              min={minFrequency}
-              max={maxFrequency}
+              value={frequency.value}
+              min={initialFormValues.frequency.min}
+              max={initialFormValues.frequency.max}
               step={1}
-              onChangeValue={onChangeFrequency}
+              onChangeValue={frequency.onChange}
               id="frequency-slider"
             />
           </div>
           <div className="form-section d-flex flex-column align-items-start">
             <span className="label-text">Amplitude</span>
             <Slider
-              value={formData.amplitude}
-              min={minAmplitude}
-              max={maxAmplitude}
+              value={amplitude.value}
+              min={initialFormValues.amplitude.min}
+              max={initialFormValues.amplitude.max}
               step={1}
-              onChangeValue={onChangeAmplitude}
+              onChangeValue={amplitude.onChange}
               id="amplitude-slider"
             />
           </div>
-          <div className="form-section d-flex flex-column align-items-start">
+          {/*           <div className="form-section d-flex flex-column align-items-start">
             <span className="label-text">Phase</span>
             <Slider
               value={formData.phase}
@@ -217,26 +141,26 @@ function WaveformForm() {
               onChangeValue={onChangePhase}
               id="phase-slider"
             />
-          </div>
+          </div> */}
           <div className="form-section d-flex flex-column align-items-start">
             <span className="label-text">Sampling Frequency</span>
             <Slider
-              value={formData.samplingFrequency}
-              min={minSamplingFrequency}
-              max={maxSamplingFrequency}
+              value={samplingRate.value}
+              min={initialFormValues.samplingRate.min}
+              max={initialFormValues.samplingRate.max}
               step={1}
-              onChangeValue={onChangeSamplingFrequency}
+              onChangeValue={samplingRate.onChange}
               id="sampling-frequency-slider"
             />
           </div>
           <div className="form-section d-flex flex-column align-items-start">
             <span className="label-text">Length</span>
             <Slider
-              value={formData.harmonics}
-              min={minLength}
-              max={maxLength}
+              value={length.value}
+              min={initialFormValues.length.min}
+              max={initialFormValues.length.max}
               step={1}
-              onChangeValue={onChangeHarmonics}
+              onChangeValue={length.onChange}
               id="length-slider"
             />
           </div>
