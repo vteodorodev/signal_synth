@@ -12,8 +12,8 @@ export function buildCanvas(
     .select(svgRef.current)
     .attr("viewBox", `0 0 ${layout.width} ${layout.height}`)
     .attr("id", id)
-    .attr("width", layout.width + margin.left + margin.right)
-    .attr("height", layout.height + margin.top + margin.bottom)
+    .attr("width", layout.width)
+    .attr("height", layout.height)
     /*     .attr("width", "100%")
     .attr("height", "100%") */
     .append("g")
