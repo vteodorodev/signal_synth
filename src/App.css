@@ -1,40 +1,49 @@
 .App {
+  display: flex;
+  flex-direction: column;
   text-align: center;
   width: 100vw;
   height: 100vh;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  width: 100%;
+  gap: 0.5vw;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.chart-main-wrapper {
+  /*   padding-top: 5rem;
+ */
+  height: 100%;
+  display: grid;
+  grid-template-columns: 2fr 10fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+    "form time-chart-container"
+    "form frequency-chart-container";
+  column-gap: 0.5vw;
 }
 
-.App-header {
-  background-color: var(--black);
-  min-height: 100vh;
+.charts-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex: 1;
+  align-self: stretch;
+  gap: 0.5vw;
 }
 
-.App-link {
-  color: #61dafb;
+.charts-container > .chart {
+  flex: 1;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.time-chart-container {
+  grid-area: time-chart-container;
+}
+
+.frequency-chart-container {
+  grid-area: frequency-chart-container;
 }

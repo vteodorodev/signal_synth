@@ -1,1 +1,38 @@
 @import url("/src/styles/_variables.css");
+
+.slider {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.slider input[type="slider"] {
+  flex: 1;
+}
+
+.slider input[type="number"] {
+  min-width: 0;
+  width: 15%;
+}
+
+input {
+  border: none;
+}
+
+.slider input[type="range"] {
+  flex: 1;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}

@@ -1,9 +1,10 @@
 import * as d3 from "d3";
+import "../styles/charts.css";
 
 import { FourierSignal, Layout, Margin, RealSignal } from "../commons/types";
 
 export function buildCanvas(
-  svgRef: React.RefObject<HTMLElement>,
+  svgRef: React.RefObject<SVGElement>,
   layout: Layout,
   margin: Margin,
   id: string
@@ -12,9 +13,10 @@ export function buildCanvas(
     .select(svgRef.current)
     .attr("viewBox", `0 0 ${layout.width} ${layout.height}`)
     .attr("id", id)
-    // .attr("width", width + margin.left + margin.right)
-    .attr("width", "100%")
-    // .attr("height", height + margin.top + margin.bottom)
+    .attr("width", layout.width)
+    .attr("height", layout.height)
+    /*     .attr("width", "100%")
+    .attr("height", "100%") */
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -50,13 +52,27 @@ export function makeLinearScale(
   xDomain: [number, number],
   yDomain: [number, number],
   width: number,
-  height: number
+  height: number,
+  type: "time" | "frequency"
 ) {
   const xScale = d3.scaleLinear().domain(xDomain).range([0, width]);
   const yScale = d3.scaleLinear().domain(yDomain).range([height, 0]);
 
   const xAxis = d3.axisBottom(xScale);
   const yAxis = d3.axisLeft(yScale);
+
+  xAxis.tickSizeOuter(0);
+
+  switch (type) {
+    case "time":
+      xAxis.tickFormat((d) => "");
+      break;
+    case "frequency":
+      xAxis.tickFormat((d, i) => (d === 0 ? "" : `${d}`));
+      yAxis.tickFormat((d, i) => (d === 0 || i % 2 === 0 ? "" : `${d}`));
+  }
+
+  xAxis.tickSize(0);
 
   return { xScale, yScale, xAxis, yAxis };
 }
@@ -76,13 +92,15 @@ export function appendAxes(
     .attr("transform", "translate(0," + xAxisOffset + ")")
     .call(xAxis)
     .selectAll("text")
-    .style("text-anchor", "center");
+    .attr("class", "axis-font");
 
   svg
     .append("g")
     .attr("id", yAxisId)
     .attr("transform", "translate(" + yAxisOffset + ", 0)")
-    .call(yAxis);
+    .call(yAxis)
+    .selectAll("text")
+    .attr("class", "axis-font");
 }
 
 export function appendStems(
@@ -203,4 +221,78 @@ export function appendAxesLabels(
     .attr("x", chartWidth)
     .attr("y", chartHeight + 30)
     .text(xLabel ?? "");
+}
+
+export function buildRealStemChart(
+  data: RealSignal,
+  svgRef: React.RefObject<SVGElement>,
+  parentWidth: number,
+  parentHeight: number
+) {
+  const layoutHeight = parentHeight;
+  const layoutWidth = parentWidth;
+
+  const margin = { top: 40, right: 40, bottom: 40, left: 40 },
+    width = layoutWidth - margin.left - margin.right,
+    height = layoutHeight - margin.top - margin.bottom;
+
+  const { xDomain, yDomain } = getAxesDomain(data, "time");
+
+  const { xScale, yScale, xAxis, yAxis } = makeLinearScale(xDomain, yDomain, width, height, "time");
+
+  clearCanvas("time-chart");
+
+  const svg = buildCanvas(
+    svgRef,
+    { width: layoutWidth, height: layoutHeight },
+    margin,
+    "time-chart"
+  );
+
+  appendAxes(svg, "time-x-axis", "time-y-axis", xAxis, yAxis, yScale(0), xScale(0));
+
+  appendStems(svg, data, xScale, yScale, "time");
+
+  appendLines(svg, data, xScale, yScale, "time");
+}
+
+export function buildMagnitudeStemChart(
+  data: FourierSignal,
+  svgRef: React.RefObject<SVGElement>,
+  parentWidth: number,
+  parentHeight: number
+) {
+  const layoutHeight = parentHeight;
+  const layoutWidth = parentWidth;
+
+  const margin = { top: 40, right: 40, bottom: 40, left: 40 },
+    width = layoutWidth - margin.left - margin.right,
+    height = layoutHeight - margin.top - margin.bottom;
+
+  const { xDomain, yDomain } = getAxesDomain(data, "frequency");
+
+  const { xScale, yScale, xAxis, yAxis } = makeLinearScale(
+    xDomain,
+    yDomain,
+    width,
+    height,
+    "frequency"
+  );
+
+  clearCanvas("magnitude-chart");
+
+  const svg = buildCanvas(
+    svgRef,
+    { width: layoutWidth, height: layoutHeight },
+    margin,
+    "magnitude-chart"
+  );
+
+  appendStems(svg, data, xScale, yScale, "frequency");
+
+  // appendAxesLabels(svg, width, height, "Frequency (Hz)");
+
+  appendLines(svg, data, xScale, yScale, "frequency");
+
+  appendAxes(svg, "magnitude-x-axis", "magnitude-y-axis", xAxis, yAxis, yScale(0), xScale(0));
 }
