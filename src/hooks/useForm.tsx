@@ -148,8 +148,6 @@ function useForm(basicFormInfo: BasicFormInfo): FormHandler {
 
       let newLength: Number | null;
 
-      console.log(targetLength);
-
       if (targetLength > maxLength) {
         newLength = maxLength;
       } else if (targetLength < minLength) {
